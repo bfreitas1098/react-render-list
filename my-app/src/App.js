@@ -1,28 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import List from "./List";
 
-const App = () => {
-  const Number = (props) => {
-    return <li>{props.value}</li>;
-  };
+export default function App() {
+  const [jokes, setJokes] = useState("");
 
-  const NumberList = (props) => {
-    const numbers = props.numbers;
-    return (
-      <ul>
-        {numbers.map((item) => (
-          <Number key={`item ${item}`} value={item} />
-        ))}
-      </ul>
-    );
-  };
+  useEffect(() => {
+    let apiUrl =
+      "https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=single&amount=10";
 
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const displayJokes = () => {
+      axios
+        .get(apiUrl)
+        .then((response) => {
+          const allJokes = response.data.jokes;
+          setJokes(allJokes);
+        })
+        .catch((error) => console.error(`Error: ${error}`));
+    };
+    displayJokes();
+  }, []);
 
-  return (
-    <div className="App">
-      <NumberList numbers={numbers} />
-    </div>
-  );
-};
-
-export default App;
+  return <List jokes={jokes} />;
+}
